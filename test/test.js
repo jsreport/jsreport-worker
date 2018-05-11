@@ -7,7 +7,17 @@ describe('worker', () => {
   let worker
 
   beforeEach(() => {
-    worker = Worker({ httpPort: 5488, scriptManager: { strategy: 'in-process' } })
+    worker = Worker({
+      httpPort: 5488,
+      scriptManager: { strategy: 'in-process' },
+      extensions: {
+        'chrome-pdf': {
+          launchOptions: {
+            args: ['--no-sandbox']
+          }
+        }
+      }
+    })
     request = supertest(worker.server)
   })
 
