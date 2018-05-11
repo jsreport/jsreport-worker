@@ -1,21 +1,12 @@
 {
-    "name": "jsreport-docker-sandbox",
-    "version": "1.0.0",
+    "name": "jsreport-worker",
+    "version": "0.0.1",
     "description": "",
     "main": "index.js",
     "author": "Jan Blaha",
     "license": "MIT",
-    "dependencies": {
-        "bluebird": "3.5.1",
-        "jsreport-chrome-pdf": "github:jsreport/jsreport-chrome-pdf#2.0.0-beta",
-        "jsreport-core": "github:jsreport/jsreport-core#2.0.0-beta",
-        "jsreport-handlebars": "github:jsreport/jsreport-handlebars#2.0.0-beta",
-        "jsreport-scripts": "github:jsreport/jsreport-scripts#2.0.0-beta",
-        "koa": "2.5.0",
-        "koa-bodyparser": "4.2.0",
-        "puppeteer": "1.3.0",
-        "script-manager": "0.7.0",
-        "uuid": "3.2.1"
+    "scripts": {
+        "test": "mocha test"
     },
     "jsreport": {
         "engines": {
@@ -25,6 +16,15 @@
             "chrome-pdf": "jsreport-chrome-pdf"
         }
     },
+    "dependencies": {
+        "bluebird": "3.5.1",
+        "jsreport": "2.0.0",
+        "koa": "2.5.0",
+        "koa-bodyparser": "4.2.0",
+        "puppeteer": "1.3.0",
+        "script-manager": "0.7.0",
+        "uuid": "3.2.1"
+    },    
     "devDependencies": {
         "eslint": "4.19.1",
         "mocha": "5.1.0",
@@ -37,8 +37,5 @@
             "node": true,
             "mocha": true
         }
-    },
-    "scripts": {
-        "test": "mocha test"
     }
 }
