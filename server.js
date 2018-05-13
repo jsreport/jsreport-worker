@@ -1,7 +1,4 @@
 const Worker = require('./')
 
-Worker({
-  httpPort: 2000,
-  extensions: {}
-})
+Worker()
 console.log('running')
