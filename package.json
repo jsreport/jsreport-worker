@@ -10,10 +10,12 @@
     },
     "jsreport": {
         "engines": {
-            "handlebars": "jsreport-handlebars"
+            "handlebars": "jsreport-handlebars",
+            "jsrender": "jsreport-jsrender"
         },
         "recipes": {
-            "chrome-pdf": "jsreport-chrome-pdf"
+            "chrome-pdf": "jsreport-chrome-pdf",
+            "xlsx": "jsreport-xlsx"
         }
     },
     "dependencies": {
@@ -21,7 +23,9 @@
         "jsreport-chrome-pdf": "1.0.1",
         "jsreport-core": "2.0.1",
         "jsreport-handlebars": "2.0.0",
+        "jsreport-jsrender": "2.0.0",
         "jsreport-scripts": "2.0.1",
+        "jsreport-xlsx": "2.0.0",
         "koa": "2.5.0",
         "koa-bodyparser": "4.2.0",
         "puppeteer": "1.3.0",

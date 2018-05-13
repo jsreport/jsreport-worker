@@ -8,7 +8,7 @@ describe('worker', () => {
 
   beforeEach(() => {
     worker = Worker({
-      httpPort: 5488,
+      httpPort: 3000,
       scriptManager: { strategy: 'in-process' },
       extensions: {
         'chrome-pdf': {
