@@ -1,4 +1,5 @@
 const Worker = require('./')
 
-Worker()
-console.log('running')
+Worker().init().then(() => {
+  console.log('running')
+})

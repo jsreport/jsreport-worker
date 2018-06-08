@@ -6,7 +6,7 @@ describe('worker', () => {
   let request
   let worker
 
-  beforeEach(() => {
+  beforeEach(async () => {
     worker = Worker({
       httpPort: 3000,
       scriptManager: { strategy: 'in-process' },
@@ -18,6 +18,7 @@ describe('worker', () => {
         }
       }
     })
+    await worker.init()
     request = supertest(worker.server)
   })
 
