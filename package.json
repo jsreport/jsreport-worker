@@ -15,6 +15,7 @@
         },
         "recipes": {
             "chrome-pdf": "jsreport-chrome-pdf",
+            "phantom-pdf": "jsreport-phantom-pdf",
             "xlsx": "jsreport-xlsx"
         }
     },
@@ -24,11 +25,13 @@
         "jsreport-core": "github:jsreport/jsreport-core",
         "jsreport-handlebars": "2.0.0",
         "jsreport-jsrender": "2.0.0",
+        "jsreport-phantom-pdf": "2.0.2",
         "jsreport-scripts": "2.0.2",
         "jsreport-xlsx": "2.0.0",
         "koa": "2.5.0",
         "koa-bodyparser": "4.2.0",
         "nconf": "0.10.0",
+        "phantomjs-exact-2-1-1": "0.1.0",
         "puppeteer": "1.4.0",
         "script-manager": "0.7.0",
         "uuid": "3.2.1"

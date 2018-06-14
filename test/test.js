@@ -42,6 +42,24 @@ describe('worker', () => {
       })
   })
 
+  it('should be able to run recipe phantom-pdf', () => {
+    return request
+      .post('/')
+      .send({
+        type: 'recipe',
+        uuid: '1',
+        data: {
+          req: { template: { recipe: 'phantom-pdf' }, context: { uuid: '1' } },
+          res: { content: 'Hello', meta: {} }
+        }
+      })
+      .expect(200)
+      .expect((res) => {
+        res.body.res.meta.contentType.should.be.eql('application/pdf')
+        res.body.res.content.should.be.of.type('string')
+      })
+  })
+
   it('should be able to run engine handlebars', () => {
     return request
       .post('/')
