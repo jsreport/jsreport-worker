@@ -1,0 +1,10 @@
+{
+  "engines": {
+    "handlebars": "jsreport-handlebars",
+    "jsrender": "jsreport-jsrender"
+  },
+  "recipes": {
+    "chrome-pdf": "jsreport-chrome-pdf",
+    "xlsx": "jsreport-xlsx"
+  }
+}
