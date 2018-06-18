@@ -18,6 +18,7 @@
         "jsreport-xlsx": "2.0.0",
         "koa": "2.5.1",
         "koa-bodyparser": "4.2.1",
+        "listener-collection": "1.2.0",
         "nconf": "0.10.0",
         "node.extend": "2.0.0",
         "puppeteer": "1.4.0",

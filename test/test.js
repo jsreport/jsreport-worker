@@ -22,7 +22,9 @@ describe('worker', () => {
     request = supertest(worker.server)
   })
 
-  afterEach(() => worker.close())
+  afterEach(async () => {
+    await worker.close()
+  })
 
   it('should be able to run recipe chrome-pdf', () => {
     return request
