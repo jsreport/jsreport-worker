@@ -1,9 +1,10 @@
-FROM ubuntu:bionic
-EXPOSE 2000
+FROM ubuntu:xenial
+# not using ubuntu:bionic because phantomjs 1.9.8 does not work there
+# (it contains a newer version of OpenSSL which can not be used with phantomjs)
 
 RUN adduser --disabled-password --gecos "" jsreport && \
-    apt-get update && \   
-    apt-get install -y --no-install-recommends libgconf-2-4 gnupg git curl wget ca-certificates && \   
+    apt-get update && \
+    apt-get install -y --no-install-recommends libgconf-2-4 gnupg git curl wget ca-certificates && \
     # phantom/electron
     apt-get install -y --no-install-recommends libgtk2.0-dev \
         libxtst-dev \
@@ -13,7 +14,7 @@ RUN adduser --disabled-password --gecos "" jsreport && \
         libasound2-dev \
         xvfb \
         xfonts-75dpi \
-        xfonts-base && \           
+        xfonts-base && \
     # java fop
     apt-get install -y default-jre unzip && \
     curl -o fop.zip apache.miloslavbrada.cz/xmlgraphics/fop/binaries/fop-2.1-bin.zip && \
@@ -38,8 +39,8 @@ RUN adduser --disabled-password --gecos "" jsreport && \
     mv phantomjs-1.9.8-linux-x86_64/bin/phantomjs /usr/local/bin/ && \
     rm -rf phantomjs* && \
     # cleanup
-    rm -rf /var/lib/apt/lists/* /var/cache/apt/* && \   
-    rm -rf /src/*.deb    
+    rm -rf /var/lib/apt/lists/* /var/cache/apt/* && \
+    rm -rf /src/*.deb
 
 RUN mkdir -p /app
 WORKDIR /app
@@ -47,13 +48,15 @@ WORKDIR /app
 COPY package.json /app/package.json
 
 # the chrome was already installed from apt-get
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true  
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 
-RUN npm install && \    
-    npm cache clean -f && \  
+RUN npm install && \
+    npm cache clean -f && \
     rm -rf /tmp/*
 
 COPY . /app
+
+EXPOSE 2000
 
 ENV PATH "$PATH:/fop-2.1"
 ENV NODE_ENV production
