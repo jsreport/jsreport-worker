@@ -5,22 +5,8 @@ FROM ubuntu:xenial
 RUN adduser --disabled-password --gecos "" jsreport && \
     apt-get update && \
     apt-get install -y --no-install-recommends libgconf-2-4 gnupg git curl wget ca-certificates && \
-    # phantom/electron
-    apt-get install -y --no-install-recommends libgtk2.0-dev \
-        libxtst-dev \
-        libxss1 \
-        libgconf2-dev \
-        libnss3-dev \
-        libasound2-dev \
-        xvfb \
-        xfonts-75dpi \
-        xfonts-base && \
-    # java fop
-    apt-get install -y default-jre unzip && \
-    curl -o fop.zip apache.miloslavbrada.cz/xmlgraphics/fop/binaries/fop-2.1-bin.zip && \
-    unzip fop.zip && \
-    rm fop.zip && \
-    chmod +x fop-2.1/fop && \
+    # chrome needs some base fonts
+    apt-get install -y --no-install-recommends xfonts-base xfonts-75dpi && \
     # node
     curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
     apt-get update && \
@@ -52,10 +38,9 @@ COPY . /app
 
 EXPOSE 2000
 
-ENV PATH "$PATH:/fop-2.1"
 ENV NODE_ENV production
-ENV templatingEngines:strategy http-server
-ENV chrome:launchOptions:executablePath google-chrome-unstable
-ENV chrome:launchOptions:args --no-sandbox
+ENV templatingEngines_strategy http-server
+ENV chrome_launchOptions_executablePath google-chrome-unstable
+ENV chrome_launchOptions_args --no-sandbox
 
 CMD ["node", "server.js"]
