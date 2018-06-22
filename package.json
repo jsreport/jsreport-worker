@@ -14,7 +14,7 @@
         "jsreport-chrome-pdf": "1.1.1",
         "jsreport-core": "github:jsreport/jsreport-core",
         "jsreport-handlebars": "2.0.0",
-        "jsreport-html-to-xlsx": "2.0.1",
+        "jsreport-html-to-xlsx": "2.0.2",
         "jsreport-jsrender": "2.0.0",
         "jsreport-scripts": "2.0.2",
         "jsreport-text": "2.0.0",
