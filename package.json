@@ -11,10 +11,10 @@
     "dependencies": {
         "bluebird": "3.5.1",
         "jsreport-browser-client": "2.0.0",
-        "jsreport-chrome-pdf": "1.1.1",
-        "jsreport-core": "github:jsreport/jsreport-core",
+        "jsreport-chrome-pdf": "1.1.5",
+        "jsreport-core": "2.1.0",
         "jsreport-handlebars": "2.0.0",
-        "jsreport-html-to-xlsx": "2.0.2",
+        "jsreport-html-to-xlsx": "2.1.0",
         "jsreport-jsrender": "2.0.0",
         "jsreport-scripts": "2.0.2",
         "jsreport-text": "2.0.0",
@@ -24,7 +24,7 @@
         "listener-collection": "1.2.0",
         "nconf": "0.10.0",
         "node.extend": "2.0.0",
-        "puppeteer": "1.4.0",
+        "puppeteer": "1.5.0",
         "script-manager": "0.7.0",
         "uuid": "3.2.1"
     },
