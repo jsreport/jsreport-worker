@@ -6,6 +6,7 @@
     "author": "Jan Blaha",
     "license": "MIT",
     "scripts": {
+        "pretest": "npm install jsreport-phantom-pdf jsreport-wkhtmltopdf --no-save",
         "test": "mocha test --timeout=5000 && standard"
     },
     "dependencies": {
