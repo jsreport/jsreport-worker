@@ -16,6 +16,12 @@ describe('worker', () => {
             args: ['--no-sandbox']
           }
         }
+      },
+      workerSpec: {
+        recipes: {
+          'phantom-pdf': 'jsreport-phantom-pdf',
+          'wkhtmltopdf': 'jsreport-wkhtmltopdf'
+        }
       }
     })
     await worker.init()
@@ -163,6 +169,108 @@ describe('worker', () => {
       .expect((res) => {
         res.body.res.meta.contentType.should.be.eql('application/pdf')
         res.body.res.content.should.be.of.type('string')
+      })
+  })
+
+  it('should be able to run multiple recipe phantom-pdf and callback for header', async () => {
+    const res = await request
+      .post('/')
+      .send({
+        type: 'recipe',
+        uuid: '1',
+        data: {
+          req: {
+            template: {
+              recipe: 'phantom-pdf',
+              phantom: { header: 'foo' }
+            },
+            context: { uuid: '1' } },
+          res: { content: 'Hello', meta: {} }
+        }
+      })
+      .expect(200)
+
+    res.body.action.should.be.eql('render')
+
+    await request
+      .post('/')
+      .send({
+        uuid: '1',
+        data: { content: 'Hello' }
+      })
+      .expect(200)
+      .expect((res) => {
+        res.body.res.meta.contentType.should.be.eql('application/pdf')
+        res.body.res.content.should.be.of.type('string')
+      })
+
+    const secondRes = await request
+      .post('/')
+      .send({
+        type: 'recipe',
+        uuid: '2',
+        data: {
+          req: {
+            template: {
+              recipe: 'phantom-pdf',
+              phantom: { header: 'foo' }
+            },
+            context: { uuid: '2' } },
+          res: { content: 'Hello', meta: {} }
+        }
+      })
+      .expect(200)
+
+    secondRes.body.action.should.be.eql('render')
+
+    await request
+      .post('/')
+      .send({
+        uuid: '2',
+        data: { content: 'Hello' }
+      })
+      .expect(200)
+      .expect((res) => {
+        res.body.res.meta.contentType.should.be.eql('application/pdf')
+        res.body.res.content.should.be.of.type('string')
+      })
+  })
+
+  it('should propagate error from wkhtmltopdf', async () => {
+    const res = await request
+      .post('/')
+      .send({
+        type: 'recipe',
+        uuid: '1',
+        data: {
+          req: {
+            template: {
+              recipe: 'wkhtmltopdf',
+              wkhtmltopdf: { header: `<!DOCTYPE html>
+              <html>
+              <body>
+                  Header...
+              </body>
+              </html>`,
+              headerHeight: 'xxxx' }
+            },
+            context: { uuid: '1' } },
+          res: { content: 'Hello', meta: {} }
+        }
+      })
+      .expect(200)
+
+    res.body.action.should.be.eql('render')
+
+    await request
+      .post('/')
+      .send({
+        uuid: '1',
+        data: { content: 'Hello' }
+      })
+      .expect(400)
+      .expect((res) => {
+        res.body.message.should.containEql('Invalid argument')
       })
   })
 })

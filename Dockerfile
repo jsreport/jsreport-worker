@@ -30,7 +30,7 @@ COPY package.json /app/package.json
 # the chrome was already installed from apt-get
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 
-RUN npm install && \
+RUN npm install --production && \
     npm cache clean -f && \
     rm -rf /tmp/*
 

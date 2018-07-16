@@ -30,6 +30,8 @@
     },
     "devDependencies": {
         "eslint": "4.19.1",
+        "jsreport-phantom-pdf": "2.1.3",
+        "jsreport-wkhtmltopdf": "2.0.3",
         "mocha": "5.2.0",
         "should": "13.2.1",
         "standard": "11.0.1",
