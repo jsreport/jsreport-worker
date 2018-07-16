@@ -1,12 +1,20 @@
+const path = require('path')
 const supertest = require('supertest')
+const execSync = require('child_process').execSync
 const Worker = require('../')
 require('should')
 
 describe('worker', () => {
   let request
   let worker
+  let devDepsInstalled = false
 
   beforeEach(async () => {
+    if (!devDepsInstalled) {
+      execSync('npm install jsreport-phantom-pdf jsreport-wkhtmltopdf --no-save', { stdio: [0, 1, 2], cwd: path.dirname(__dirname) })
+      devDepsInstalled = true
+    }
+
     worker = Worker({
       httpPort: 3000,
       scriptManager: { strategy: 'in-process' },
