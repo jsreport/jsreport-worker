@@ -1,6 +1,23 @@
 const supertest = require('supertest')
+const createSerializer = require('jsreport-core/lib/util/serializer')
+const serializer = createSerializer()
 const Worker = require('../')
 require('should')
+
+function encodePayload (payload) {
+  return {
+    payload: serializer.serialize(payload).toString('hex')
+  }
+}
+
+function decodeResponse (responseBody) {
+  if (!responseBody.payload) {
+    // body is coming from error response
+    return responseBody
+  }
+
+  return serializer.deserialize(Buffer.from(responseBody.payload, 'hex'))
+}
 
 describe('worker', () => {
   let request
@@ -35,25 +52,26 @@ describe('worker', () => {
   it('should be able to run recipe chrome-pdf', () => {
     return request
       .post('/')
-      .send({
+      .send(encodePayload({
         type: 'recipe',
         uuid: '1',
         data: {
           req: { template: { recipe: 'chrome-pdf' }, context: { uuid: '1' } },
           res: { content: 'Hello', meta: {} }
         }
-      })
+      }))
       .expect(200)
       .expect((res) => {
-        res.body.res.meta.contentType.should.be.eql('application/pdf')
-        res.body.res.content.should.be.of.type('string')
+        const body = decodeResponse(res.body)
+        body.res.meta.contentType.should.be.eql('application/pdf')
+        body.res.content.should.be.of.type('string')
       })
   })
 
   it('should be able to run engine handlebars', () => {
     return request
       .post('/')
-      .send({
+      .send(encodePayload({
         type: 'scriptManager',
         data: {
           inputs: {
@@ -66,35 +84,37 @@ describe('worker', () => {
             execModulePath: require.resolve('jsreport-core/lib/render/engineScript.js')
           }
         }
-      })
+      }))
       .expect(200)
       .expect((res) => {
-        res.body.logs.should.be.of.Array()
-        res.body.content.should.be.eql('foo hello')
+        const body = decodeResponse(res.body)
+        body.logs.should.be.of.Array()
+        body.content.should.be.eql('foo hello')
       })
   })
 
   it('should be able to run recipe chrome-pdf and propagate logs', () => {
     return request
       .post('/')
-      .send({
+      .send(encodePayload({
         type: 'recipe',
         uuid: '1',
         data: {
           req: { template: { recipe: 'chrome-pdf' }, context: { uuid: '1' } },
           res: { content: `<script>console.log('foo')</script>`, meta: {} }
         }
-      })
+      }))
       .expect(200)
       .expect((res) => {
-        res.body.req.context.logs.map(l => l.message).should.containEql('foo')
+        const body = decodeResponse(res.body)
+        body.req.context.logs.map(l => l.message).should.containEql('foo')
       })
   })
 
   it('should propagate syntax errors from engine handlebars', () => {
     return request
       .post('/')
-      .send({
+      .send(encodePayload({
         type: 'scriptManager',
         data: {
           inputs: {
@@ -106,18 +126,19 @@ describe('worker', () => {
             execModulePath: require.resolve('jsreport-core/lib/render/engineScript.js')
           }
         }
-      })
+      }))
 
       .expect(400)
       .expect((res) => {
-        res.body.message.should.be.containEql('{{#each')
+        const body = decodeResponse(res.body)
+        body.message.should.be.containEql('{{#each')
       })
   })
 
   it('should be able to run scripts', () => {
     return request
       .post('/')
-      .send({
+      .send(encodePayload({
         type: 'scriptManager',
         data: {
           inputs: {
@@ -131,18 +152,19 @@ describe('worker', () => {
             execModulePath: require.resolve('jsreport-scripts/lib/scriptEvalChild.js')
           }
         }
-      })
+      }))
       .expect(200)
       .expect((res) => {
-        res.body.logs.map(l => l.message).should.containEql('foo')
-        res.body.request.template.content.should.be.eql('foo')
+        const body = decodeResponse(res.body)
+        body.logs.map(l => l.message).should.containEql('foo')
+        body.request.template.content.should.be.eql('foo')
       })
   })
 
   it('should be able to run recipe chrome-pdf and callback for header', async () => {
     const res = await request
       .post('/')
-      .send({
+      .send(encodePayload({
         type: 'recipe',
         uuid: '1',
         data: {
@@ -154,28 +176,29 @@ describe('worker', () => {
             context: { uuid: '1' } },
           res: { content: 'Hello', meta: {} }
         }
-      })
+      }))
       .expect(200)
 
-    res.body.action.should.be.eql('render')
+    decodeResponse(res.body).action.should.be.eql('render')
 
     return request
       .post('/')
-      .send({
+      .send(encodePayload({
         uuid: '1',
         data: { content: 'Hello' }
-      })
+      }))
       .expect(200)
       .expect((res) => {
-        res.body.res.meta.contentType.should.be.eql('application/pdf')
-        res.body.res.content.should.be.of.type('string')
+        const body = decodeResponse(res.body)
+        body.res.meta.contentType.should.be.eql('application/pdf')
+        body.res.content.should.be.of.type('string')
       })
   })
 
   it('should be able to run multiple recipe phantom-pdf and callback for header', async () => {
     const res = await request
       .post('/')
-      .send({
+      .send(encodePayload({
         type: 'recipe',
         uuid: '1',
         data: {
@@ -187,26 +210,27 @@ describe('worker', () => {
             context: { uuid: '1' } },
           res: { content: 'Hello', meta: {} }
         }
-      })
+      }))
       .expect(200)
 
-    res.body.action.should.be.eql('render')
+    decodeResponse(res.body).action.should.be.eql('render')
 
     await request
       .post('/')
-      .send({
+      .send(encodePayload({
         uuid: '1',
         data: { content: 'Hello' }
-      })
+      }))
       .expect(200)
       .expect((res) => {
-        res.body.res.meta.contentType.should.be.eql('application/pdf')
-        res.body.res.content.should.be.of.type('string')
+        const body = decodeResponse(res.body)
+        body.res.meta.contentType.should.be.eql('application/pdf')
+        body.res.content.should.be.of.type('string')
       })
 
     const secondRes = await request
       .post('/')
-      .send({
+      .send(encodePayload({
         type: 'recipe',
         uuid: '2',
         data: {
@@ -218,28 +242,29 @@ describe('worker', () => {
             context: { uuid: '2' } },
           res: { content: 'Hello', meta: {} }
         }
-      })
+      }))
       .expect(200)
 
-    secondRes.body.action.should.be.eql('render')
+    decodeResponse(secondRes.body).action.should.be.eql('render')
 
     await request
       .post('/')
-      .send({
+      .send(encodePayload({
         uuid: '2',
         data: { content: 'Hello' }
-      })
+      }))
       .expect(200)
       .expect((res) => {
-        res.body.res.meta.contentType.should.be.eql('application/pdf')
-        res.body.res.content.should.be.of.type('string')
+        const body = decodeResponse(res.body)
+        body.res.meta.contentType.should.be.eql('application/pdf')
+        body.res.content.should.be.of.type('string')
       })
   })
 
   it('should propagate error from wkhtmltopdf', async () => {
     const res = await request
       .post('/')
-      .send({
+      .send(encodePayload({
         type: 'recipe',
         uuid: '1',
         data: {
@@ -257,20 +282,21 @@ describe('worker', () => {
             context: { uuid: '1' } },
           res: { content: 'Hello', meta: {} }
         }
-      })
+      }))
       .expect(200)
 
-    res.body.action.should.be.eql('render')
+    decodeResponse(res.body).action.should.be.eql('render')
 
     await request
       .post('/')
-      .send({
+      .send(encodePayload({
         uuid: '1',
         data: { content: 'Hello' }
-      })
+      }))
       .expect(400)
       .expect((res) => {
-        res.body.message.should.containEql('Invalid argument')
+        const body = decodeResponse(res.body)
+        body.message.should.containEql('Invalid argument')
       })
   })
 })
