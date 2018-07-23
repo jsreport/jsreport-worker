@@ -41,6 +41,6 @@ EXPOSE 2000
 ENV NODE_ENV production
 ENV templatingEngines_strategy http-server
 ENV chrome_launchOptions_executablePath google-chrome-unstable
-ENV chrome_launchOptions_args --no-sandbox
+ENV chrome_launchOptions_args --no-sandbox,--disable-dev-shm-usage
 
 CMD ["node", "server.js"]
