@@ -1,12 +1,10 @@
 const supertest = require('supertest')
-const createSerializer = require('jsreport-core/lib/util/serializer')
-const serializer = createSerializer()
 const Worker = require('../')
 require('should')
 
 function encodePayload (payload) {
   return {
-    payload: serializer.serialize(payload).toString('hex')
+    payload: payload
   }
 }
 
@@ -16,7 +14,7 @@ function decodeResponse (responseBody) {
     return responseBody
   }
 
-  return serializer.deserialize(Buffer.from(responseBody.payload, 'hex'))
+  return responseBody.payload
 }
 
 describe('worker', () => {
