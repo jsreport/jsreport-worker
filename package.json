@@ -7,7 +7,7 @@
     "license": "MIT",
     "scripts": {
         "pretest": "npm install jsreport-phantom-pdf jsreport-wkhtmltopdf --no-save",
-        "test": "mocha test --timeout=5000 && standard"
+        "test": "mocha test --timeout=8000 && standard"
     },
     "dependencies": {
         "bluebird": "3.5.1",
