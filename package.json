@@ -17,6 +17,7 @@
         "jsreport-handlebars": "2.0.0",
         "jsreport-html-to-xlsx": "2.1.1",
         "jsreport-jsrender": "2.0.0",
+        "jsreport-pdf-utils": "1.0.3",
         "jsreport-scripts": "2.0.3",
         "jsreport-text": "2.0.0",
         "jsreport-xlsx": "2.0.1",
