@@ -13,7 +13,7 @@
         "bluebird": "3.5.1",
         "jsreport-browser-client": "2.0.0",
         "jsreport-chrome-pdf": "1.1.5",
-        "jsreport-core": "2.1.2",
+        "jsreport-core": "2.1.3",
         "jsreport-handlebars": "2.0.0",
         "jsreport-html-to-xlsx": "2.1.1",
         "jsreport-jsrender": "2.0.0",
