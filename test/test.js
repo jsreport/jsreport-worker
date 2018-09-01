@@ -1,6 +1,11 @@
+const path = require('path')
 const supertest = require('supertest')
+const serializator = require('serializator')
 const Worker = require('../')
-require('should')
+const should = require('should')
+
+const workerTempDirectory = path.join(require('os').tmpdir(), 'test-jsreport-worker')
+const workerTempAutoCleanupDirectory = path.join(workerTempDirectory, 'autocleanup')
 
 function encodeRequestPayload (payload) {
   return {
@@ -8,17 +13,13 @@ function encodeRequestPayload (payload) {
   }
 }
 
-function encodeRenderResContent (data) {
-  return (Buffer.isBuffer(data) ? data : Buffer.from(data)).toString('base64')
-}
-
 function decodeResponsePayload (responseBody) {
   if (!responseBody.payload) {
     // body is coming from error response
-    return responseBody
+    return serializator.parse(JSON.stringify(responseBody))
   }
 
-  return responseBody.payload
+  return serializator.parse(JSON.stringify(responseBody.payload))
 }
 
 describe('worker', () => {
@@ -41,7 +42,9 @@ describe('worker', () => {
           'phantom-pdf': 'jsreport-phantom-pdf',
           'wkhtmltopdf': 'jsreport-wkhtmltopdf'
         }
-      }
+      },
+      workerTempDirectory,
+      workerTempAutoCleanupDirectory
     })
     await worker.init()
     request = supertest(worker.server)
@@ -59,14 +62,14 @@ describe('worker', () => {
         uuid: '1',
         data: {
           req: { template: { recipe: 'chrome-pdf' }, context: { uuid: '1' } },
-          res: { content: encodeRenderResContent('Hello'), meta: {} }
+          res: { content: 'Hello', meta: {} }
         }
       }))
       .expect(200)
       .expect((res) => {
         const body = decodeResponsePayload(res.body)
         body.res.meta.contentType.should.be.eql('application/pdf')
-        body.res.content.should.be.of.type('string')
+        should(Buffer.isBuffer(body.res.content)).be.eql(true)
       })
   })
 
@@ -104,7 +107,7 @@ describe('worker', () => {
         data: {
           req: { template: { recipe: 'chrome-pdf' }, context: { uuid: '1' } },
           res: {
-            content: encodeRenderResContent(`<script>console.log('foo')</script>`),
+            content: `<script>console.log('foo')</script>`,
             meta: {}
           }
         }
@@ -180,7 +183,7 @@ describe('worker', () => {
             },
             context: { uuid: '1' }
           },
-          res: { content: encodeRenderResContent('Hello'), meta: {} }
+          res: { content: 'Hello', meta: {} }
         }
       }))
       .expect(200)
@@ -194,7 +197,7 @@ describe('worker', () => {
       .send(encodeRequestPayload({
         uuid: '1',
         data: {
-          content: encodeRenderResContent('Hello'),
+          content: 'Hello',
           req: resData.data.req
         }
       }))
@@ -202,7 +205,7 @@ describe('worker', () => {
       .expect((res) => {
         const body = decodeResponsePayload(res.body)
         body.res.meta.contentType.should.be.eql('application/pdf')
-        body.res.content.should.be.of.type('string')
+        should(Buffer.isBuffer(body.res.content)).be.eql(true)
       })
   })
 
@@ -220,7 +223,7 @@ describe('worker', () => {
             },
             context: { uuid: '1' }
           },
-          res: { content: encodeRenderResContent('Hello'), meta: {} }
+          res: { content: 'Hello', meta: {} }
         }
       }))
       .expect(200)
@@ -233,13 +236,13 @@ describe('worker', () => {
       .post('/')
       .send(encodeRequestPayload({
         uuid: '1',
-        data: { content: encodeRenderResContent('Hello'), req: resData.data.req }
+        data: { content: 'Hello', req: resData.data.req }
       }))
       .expect(200)
       .expect((res) => {
         const body = decodeResponsePayload(res.body)
         body.res.meta.contentType.should.be.eql('application/pdf')
-        body.res.content.should.be.of.type('string')
+        should(Buffer.isBuffer(body.res.content)).be.eql(true)
       })
 
     const secondRes = await request
@@ -254,7 +257,7 @@ describe('worker', () => {
               phantom: { header: 'foo' }
             },
             context: { uuid: '2' } },
-          res: { content: encodeRenderResContent('Hello'), meta: {} }
+          res: { content: 'Hello', meta: {} }
         }
       }))
       .expect(200)
@@ -267,13 +270,13 @@ describe('worker', () => {
       .post('/')
       .send(encodeRequestPayload({
         uuid: '2',
-        data: { content: encodeRenderResContent('Hello'), req: resData.data.req }
+        data: { content: 'Hello', req: resData.data.req }
       }))
       .expect(200)
       .expect((res) => {
         const body = decodeResponsePayload(res.body)
         body.res.meta.contentType.should.be.eql('application/pdf')
-        body.res.content.should.be.of.type('string')
+        should(Buffer.isBuffer(body.res.content)).be.eql(true)
       })
   })
 
@@ -298,7 +301,7 @@ describe('worker', () => {
               headerHeight: 'xxxx' }
             },
             context: { uuid: '1' } },
-          res: { content: encodeRenderResContent('Hello'), meta: {} }
+          res: { content: 'Hello', meta: {} }
         }
       }))
       .expect(200)
@@ -311,7 +314,7 @@ describe('worker', () => {
       .post('/')
       .send(encodeRequestPayload({
         uuid: '1',
-        data: { content: encodeRenderResContent('Hello'), req: resData.data.req }
+        data: { content: 'Hello', req: resData.data.req }
       }))
       .expect(400)
       .expect((res) => {
@@ -344,7 +347,9 @@ describe('worker with unexpected error', async () => {
           'phantom-pdf': 'jsreport-phantom-pdf',
           'wkhtmltopdf': 'jsreport-wkhtmltopdf'
         }
-      }
+      },
+      workerTempDirectory,
+      workerTempAutoCleanupDirectory
     })
     await worker.init()
     request = supertest(worker.server)
@@ -367,7 +372,7 @@ describe('worker with unexpected error', async () => {
               chrome: { headerTemplate: 'foo' }
             },
             context: { uuid: '1' } },
-          res: { content: encodeRenderResContent('Hello'), meta: {} }
+          res: { content: 'Hello', meta: {} }
         }
       }))
       .expect(200)
@@ -388,7 +393,7 @@ describe('worker with unexpected error', async () => {
       .send(encodeRequestPayload({
         uuid: '1',
         data: {
-          content: encodeRenderResContent('Hello'),
+          content: 'Hello',
           req: resData.data.req
         }
       }))
