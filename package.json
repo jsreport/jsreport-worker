@@ -28,7 +28,7 @@
         "nconf": "0.10.0",
         "node.extend": "2.0.0",
         "puppeteer": "1.7.0",
-        "script-manager": "0.7.1",
+        "script-manager": "0.8.0",
         "serializator": "1.0.0",
         "uuid": "3.3.2"
     },
