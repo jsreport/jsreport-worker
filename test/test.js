@@ -327,7 +327,8 @@ describe('worker', () => {
 describe('worker with unexpected error', async () => {
   let worker
   let request
-  let chromeTimeout = 2000
+  const chromeTimeout = 3000
+  const workerCallbackTimeout = 100
 
   beforeEach(async () => {
     worker = Worker({
@@ -341,7 +342,7 @@ describe('worker with unexpected error', async () => {
           }
         }
       },
-      workerCallbackTimeout: 4000,
+      workerCallbackTimeout,
       workerSpec: {
         recipes: {
           'phantom-pdf': 'jsreport-phantom-pdf',
@@ -380,13 +381,6 @@ describe('worker with unexpected error', async () => {
     const resData = decodeResponsePayload(res.body)
 
     resData.action.should.be.eql('render')
-
-    // this delay makes the chrome's header render to fail with timeout error
-    // which in the end is not propagated anywhere because there is no active http
-    // connection to respond
-    await new Promise((resolve) => {
-      setTimeout(resolve, chromeTimeout + 500)
-    })
 
     return request
       .post('/')
