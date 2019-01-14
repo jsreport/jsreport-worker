@@ -1,4 +1,6 @@
 const path = require('path')
+const fs = require('fs')
+const uuid = require('uuid')
 const supertest = require('supertest')
 const serializator = require('serializator')
 const Worker = require('../')
@@ -20,6 +22,27 @@ function decodeResponsePayload (responseBody) {
   }
 
   return serializator.parse(JSON.stringify(responseBody.payload))
+}
+
+function readContentFile (contentInfo) {
+  let content = fs.readFileSync(path.join(workerTempAutoCleanupDirectory, contentInfo.file))
+
+  if (contentInfo.type === 'string') {
+    content = content.toString()
+  }
+
+  return content
+}
+
+function updateContentToFile (content) {
+  const id = uuid.v4()
+
+  fs.writeFileSync(path.join(workerTempAutoCleanupDirectory, id), content)
+
+  return {
+    file: id,
+    type: typeof content === 'string' ? 'string' : 'buffer'
+  }
 }
 
 describe('worker', () => {
@@ -62,13 +85,14 @@ describe('worker', () => {
         uuid: '1',
         data: {
           req: { template: { recipe: 'chrome-pdf' }, context: { uuid: '1' } },
-          res: { content: 'Hello', meta: {} }
+          res: { content: updateContentToFile('Hello'), meta: {} }
         }
       }))
       .expect(200)
       .expect((res) => {
         const body = decodeResponsePayload(res.body)
         body.res.meta.contentType.should.be.eql('application/pdf')
+        body.res.content = readContentFile(body.res.content)
         should(Buffer.isBuffer(body.res.content)).be.eql(true)
       })
   })
@@ -82,7 +106,7 @@ describe('worker', () => {
           inputs: {
             safeSandboxPath: require.resolve('jsreport-core/lib/render/safeSandbox.js'),
             engine: require.resolve('jsreport-handlebars/lib/handlebarsEngine.js'),
-            template: { content: 'foo {{m}}' },
+            template: { content: updateContentToFile('foo {{m}}') },
             data: { m: 'hello' }
           },
           options: {
@@ -94,6 +118,7 @@ describe('worker', () => {
       .expect((res) => {
         const body = decodeResponsePayload(res.body)
         body.logs.should.be.of.Array()
+        body.content = readContentFile(body.content)
         body.content.should.be.eql('foo hello')
       })
   })
@@ -107,7 +132,7 @@ describe('worker', () => {
         data: {
           req: { template: { recipe: 'chrome-pdf' }, context: { uuid: '1' } },
           res: {
-            content: `<script>console.log('foo')</script>`,
+            content: updateContentToFile(`<script>console.log('foo')</script>`),
             meta: {}
           }
         }
@@ -128,7 +153,7 @@ describe('worker', () => {
           inputs: {
             safeSandboxPath: require.resolve('jsreport-core/lib/render/safeSandbox.js'),
             engine: require.resolve('jsreport-handlebars/lib/handlebarsEngine.js'),
-            template: { content: '{{#each}}' }
+            template: { content: updateContentToFile('{{#each}}') }
           },
           options: {
             execModulePath: require.resolve('jsreport-core/lib/render/engineScript.js')
@@ -165,6 +190,7 @@ describe('worker', () => {
       .expect((res) => {
         const body = decodeResponsePayload(res.body)
         body.logs.map(l => l.message).should.containEql('foo')
+        body.request.template.content = readContentFile(body.request.template.content)
         body.request.template.content.should.be.eql('foo')
       })
   })
@@ -183,7 +209,7 @@ describe('worker', () => {
             },
             context: { uuid: '1' }
           },
-          res: { content: 'Hello', meta: {} }
+          res: { content: updateContentToFile('Hello'), meta: {} }
         }
       }))
       .expect(200)
@@ -196,8 +222,9 @@ describe('worker', () => {
       .post('/')
       .send(encodeRequestPayload({
         uuid: '1',
+        type: 'recipe',
         data: {
-          content: 'Hello',
+          content: updateContentToFile('Hello'),
           req: resData.data.req
         }
       }))
@@ -205,6 +232,7 @@ describe('worker', () => {
       .expect((res) => {
         const body = decodeResponsePayload(res.body)
         body.res.meta.contentType.should.be.eql('application/pdf')
+        body.res.content = readContentFile(body.res.content)
         should(Buffer.isBuffer(body.res.content)).be.eql(true)
       })
   })
@@ -223,7 +251,7 @@ describe('worker', () => {
             },
             context: { uuid: '1' }
           },
-          res: { content: 'Hello', meta: {} }
+          res: { content: updateContentToFile('Hello'), meta: {} }
         }
       }))
       .expect(200)
@@ -236,12 +264,14 @@ describe('worker', () => {
       .post('/')
       .send(encodeRequestPayload({
         uuid: '1',
-        data: { content: 'Hello', req: resData.data.req }
+        type: 'recipe',
+        data: { content: updateContentToFile('Hello'), req: resData.data.req }
       }))
       .expect(200)
       .expect((res) => {
         const body = decodeResponsePayload(res.body)
         body.res.meta.contentType.should.be.eql('application/pdf')
+        body.res.content = readContentFile(body.res.content)
         should(Buffer.isBuffer(body.res.content)).be.eql(true)
       })
 
@@ -257,7 +287,7 @@ describe('worker', () => {
               phantom: { header: 'foo' }
             },
             context: { uuid: '2' } },
-          res: { content: 'Hello', meta: {} }
+          res: { content: updateContentToFile('Hello'), meta: {} }
         }
       }))
       .expect(200)
@@ -270,12 +300,14 @@ describe('worker', () => {
       .post('/')
       .send(encodeRequestPayload({
         uuid: '2',
-        data: { content: 'Hello', req: resData.data.req }
+        type: 'recipe',
+        data: { content: updateContentToFile('Hello'), req: resData.data.req }
       }))
       .expect(200)
       .expect((res) => {
         const body = decodeResponsePayload(res.body)
         body.res.meta.contentType.should.be.eql('application/pdf')
+        body.res.content = readContentFile(body.res.content)
         should(Buffer.isBuffer(body.res.content)).be.eql(true)
       })
   })
@@ -301,7 +333,7 @@ describe('worker', () => {
               headerHeight: 'xxxx' }
             },
             context: { uuid: '1' } },
-          res: { content: 'Hello', meta: {} }
+          res: { content: updateContentToFile('Hello'), meta: {} }
         }
       }))
       .expect(200)
@@ -314,7 +346,8 @@ describe('worker', () => {
       .post('/')
       .send(encodeRequestPayload({
         uuid: '1',
-        data: { content: 'Hello', req: resData.data.req }
+        type: 'recipe',
+        data: { content: updateContentToFile('Hello'), req: resData.data.req }
       }))
       .expect(400)
       .expect((res) => {
@@ -373,7 +406,7 @@ describe('worker with unexpected error', async () => {
               chrome: { headerTemplate: 'foo' }
             },
             context: { uuid: '1' } },
-          res: { content: 'Hello', meta: {} }
+          res: { content: updateContentToFile('Hello'), meta: {} }
         }
       }))
       .expect(200)
@@ -386,8 +419,9 @@ describe('worker with unexpected error', async () => {
       .post('/')
       .send(encodeRequestPayload({
         uuid: '1',
+        type: 'recipe',
         data: {
-          content: 'Hello',
+          content: updateContentToFile('Hello'),
           req: resData.data.req
         }
       }))
