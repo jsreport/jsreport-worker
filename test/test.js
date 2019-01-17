@@ -9,6 +9,8 @@ const should = require('should')
 const workerTempDirectory = path.join(require('os').tmpdir(), 'test-jsreport-worker')
 const workerTempAutoCleanupDirectory = path.join(workerTempDirectory, 'autocleanup')
 
+let usingTempFiles = false
+
 function encodeRequestPayload (payload) {
   return {
     payload: payload
@@ -25,6 +27,10 @@ function decodeResponsePayload (responseBody) {
 }
 
 function readContentFile (contentInfo) {
+  if (!usingTempFiles) {
+    return contentInfo
+  }
+
   let content = fs.readFileSync(path.join(workerTempAutoCleanupDirectory, contentInfo.file))
 
   if (contentInfo.type === 'string') {
@@ -35,6 +41,10 @@ function readContentFile (contentInfo) {
 }
 
 function updateContentToFile (content) {
+  if (!usingTempFiles) {
+    return content
+  }
+
   const id = uuid.v4()
 
   fs.writeFileSync(path.join(workerTempAutoCleanupDirectory, id), content)
