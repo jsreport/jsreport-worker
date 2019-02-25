@@ -7,7 +7,7 @@
     "license": "MIT",
     "scripts": {
         "pretest": "npm install jsreport-phantom-pdf jsreport-wkhtmltopdf --no-save",
-        "test": "mocha test --timeout=8000 && standard"
+        "test": "mocha test --timeout=12000 && standard"
     },
     "dependencies": {
         "bluebird": "3.5.3",
@@ -25,7 +25,6 @@
         "koa-bodyparser": "4.2.1",
         "listener-collection": "1.2.0",
         "lodash.omit": "4.5.0",
-        "lodash.set": "4.3.2",
         "nconf": "0.10.0",
         "node.extend": "2.0.2",
         "puppeteer": "1.12.2",
