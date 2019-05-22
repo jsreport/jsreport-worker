@@ -5,6 +5,7 @@
   },
   "recipes": {
     "chrome-pdf": "jsreport-chrome-pdf",
+    "chrome-image": "jsreport-chrome-pdf",
     "html-with-browser-client": "jsreport-browser-client",
     "html-to-xlsx": "jsreport-html-to-xlsx",
     "xlsx": "jsreport-xlsx",
