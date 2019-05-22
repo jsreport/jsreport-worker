@@ -29,6 +29,7 @@
         "node.extend": "2.0.2",
         "puppeteer": "1.12.2",
         "script-manager": "0.8.5",
+        "semaphore-async-await": "1.5.1",
         "serializator": "1.0.1",
         "uuid": "3.3.2"
     },
