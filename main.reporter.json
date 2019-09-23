@@ -6,6 +6,9 @@
   "recipes": {
     "chrome-pdf": "jsreport-chrome-pdf",
     "chrome-image": "jsreport-chrome-pdf",
+    "docx": "jsreport-docx",
+    "pptx": "jsreport-pptx",
+    "static-pdf": "jsreport-static-pdf",
     "html-with-browser-client": "jsreport-browser-client",
     "html-to-xlsx": "jsreport-html-to-xlsx",
     "xlsx": "jsreport-xlsx",
