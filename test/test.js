@@ -82,6 +82,7 @@ describe('worker', () => {
           inputs: {
             safeSandboxPath: require.resolve('jsreport-core/lib/render/safeSandbox.js'),
             engine: require.resolve('jsreport-handlebars/lib/handlebarsEngine.js'),
+            engineOptions: { handlebarsModulePath: require.resolve('handlebars') },
             template: { content: 'foo {{m}}' },
             data: { m: 'hello' }
           },
@@ -128,6 +129,7 @@ describe('worker', () => {
           inputs: {
             safeSandboxPath: require.resolve('jsreport-core/lib/render/safeSandbox.js'),
             engine: require.resolve('jsreport-handlebars/lib/handlebarsEngine.js'),
+            engineOptions: { handlebarsModulePath: require.resolve('handlebars') },
             template: { content: '{{#each}}' }
           },
           options: {
