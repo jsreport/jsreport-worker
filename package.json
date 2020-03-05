@@ -14,7 +14,7 @@
         "handlebars": "4.7.3",
         "jsreport-browser-client": "2.2.2",
         "jsreport-chrome-pdf": "1.7.1",
-        "jsreport-core": "2.7.2",
+        "jsreport-core": "github:jsreport/jsreport-core",
         "jsreport-docx": "2.5.0",
         "jsreport-handlebars": "2.1.0",
         "jsreport-html-to-xlsx": "2.6.0",

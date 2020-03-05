@@ -5,5 +5,5 @@ addons:
     packages:
       # This is required to run new chrome on old trusty
       - libnss3
-node_js: 
-  - "8"
+node_js:
+  - "12"
