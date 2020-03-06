@@ -78,6 +78,7 @@ describe('worker', () => {
       .post('/')
       .send(encodeRequestPayload({
         type: 'scriptManager',
+        uuid: '1',
         data: {
           inputs: {
             safeSandboxPath: require.resolve('jsreport-core/lib/render/safeSandbox.js'),
@@ -88,13 +89,15 @@ describe('worker', () => {
           },
           options: {
             execModulePath: require.resolve('jsreport-core/lib/render/engineScript.js')
-          }
+          },
+          req: { context: { uuid: '1' } }
         }
       }))
       .expect(200)
       .expect((res) => {
         const body = decodeResponsePayload(res.body)
         body.logs.should.be.of.Array()
+        console.log(body)
         body.content.should.be.eql('foo hello')
       })
   })
@@ -125,6 +128,7 @@ describe('worker', () => {
       .post('/')
       .send(encodeRequestPayload({
         type: 'scriptManager',
+        uuid: '1',
         data: {
           inputs: {
             safeSandboxPath: require.resolve('jsreport-core/lib/render/safeSandbox.js'),
@@ -134,7 +138,8 @@ describe('worker', () => {
           },
           options: {
             execModulePath: require.resolve('jsreport-core/lib/render/engineScript.js')
-          }
+          },
+          req: { context: { uuid: '1' } }
         }
       }))
 
@@ -150,6 +155,7 @@ describe('worker', () => {
       .post('/')
       .send(encodeRequestPayload({
         type: 'scriptManager',
+        uuid: '1',
         data: {
           inputs: {
             method: 'beforeRender',
@@ -160,7 +166,8 @@ describe('worker', () => {
           },
           options: {
             execModulePath: require.resolve('jsreport-scripts/lib/scriptEvalChild.js')
-          }
+          },
+          req: { context: { uuid: '1' } }
         }
       }))
       .expect(200)
