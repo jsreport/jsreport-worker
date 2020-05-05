@@ -96,9 +96,9 @@ describe('worker', () => {
       .expect(200)
       .expect((res) => {
         const body = decodeResponsePayload(res.body)
-        body.logs.should.be.of.Array()
+        body.result.logs.should.be.of.Array()
         console.log(body)
-        body.content.should.be.eql('foo hello')
+        body.result.content.should.be.eql('foo hello')
       })
   })
 
@@ -165,7 +165,8 @@ describe('worker', () => {
             safeSandboxPath: require.resolve('jsreport-core/lib/render/safeSandbox.js')
           },
           options: {
-            execModulePath: require.resolve('jsreport-scripts/lib/scriptEvalChild.js')
+            execModulePath: require.resolve('jsreport-scripts/lib/scriptEvalChild.js'),
+            callbackModulePath: null
           },
           req: { context: { uuid: '1' } }
         }
@@ -173,8 +174,8 @@ describe('worker', () => {
       .expect(200)
       .expect((res) => {
         const body = decodeResponsePayload(res.body)
-        body.logs.map(l => l.message).should.containEql('foo')
-        body.request.template.content.should.be.eql('foo')
+        body.req.context.logs.map(l => l.message).should.containEql('foo')
+        body.result.request.template.content.should.be.eql('foo')
       })
   })
 
