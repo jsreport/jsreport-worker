@@ -11,9 +11,9 @@
     },
     "dependencies": {
         "bluebird": "3.5.5",
-        "handlebars": "4.7.3",
+        "handlebars": "4.7.6",
         "jsreport-browser-client": "2.2.2",
-        "jsreport-chrome-pdf": "1.7.1",
+        "jsreport-chrome-pdf": "github:jsreport/jsreport-chrome-pdf",
         "jsreport-core": "github:jsreport/jsreport-core",
         "jsreport-docx": "github:jsreport/jsreport-docx",
         "jsreport-handlebars": "2.1.0",
