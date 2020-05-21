@@ -1,6 +1,6 @@
 {
     "name": "jsreport-worker",
-    "version": "0.7.0",
+    "version": "0.8.0",
     "description": "Sandbox jsreport execution into extra process",
     "main": "index.js",
     "author": "Jan Blaha",
