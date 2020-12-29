@@ -5,7 +5,7 @@ EXPOSE 2000
 
 RUN adduser --disabled-password --gecos "" jsreport && \
     apt-get update && \
-    apt-get install -y --no-install-recommends libgconf-2-4 gnupg git curl wget ca-certificates && \
+    apt-get install -y --no-install-recommends libxss1 libgconf-2-4 gnupg git curl wget ca-certificates && \
     # chrome needs some base fonts
     apt-get install -y --no-install-recommends xfonts-base xfonts-75dpi && \
     # chrome
