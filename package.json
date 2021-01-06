@@ -24,7 +24,7 @@
         "jsreport-scripts": "2.6.0",
         "jsreport-static-pdf": "0.4.0",
         "jsreport-text": "2.0.0",
-        "jsreport-version-control": "1.6.1",
+        "jsreport-version-control": "1.6.2",
         "jsreport-xlsx": "2.5.0",
         "koa": "2.7.0",
         "koa-bodyparser": "4.2.1",
